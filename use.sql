@@ -1,0 +1,1 @@
+SELECT * FROM `transactions`, `accounts` WHERE `accounts`.`account_number`='9990010011' AND `transactions`.`account_id`=`accounts`.`account_id`
