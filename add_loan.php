@@ -54,7 +54,7 @@ $emi_total = $emi * $loan_duration;
 }
 
 // check if customer has an loan account
-$sql = "SELECT * FROM accounts WHERE customer_id='$customer_id 'AND account_type='4'";
+$sql = "SELECT * FROM accounts WHERE customer_id='$customer_id' AND account_type='4'";
 $result = $conn->query($sql);
 
 if($result->num_rows > 0){
@@ -63,7 +63,7 @@ if($result->num_rows > 0){
     $row = $result->fetch_assoc();
     $account_id=$row["account_id"];
     // insert a new loan
-    $sql = "INSERT INTO loans (loan_type, loan_amount, loan_duration, interest_rate, loan_date, loan_status, account_id , customer_id) VALUES ('" . $loan_type . "', '" . $loan_amount . "', '" . $loan_duration . "', '" . $interest_rate . "', '" . $loan_date . "', '" . $loan_status . "', '" . $account_id . "','" . $customer_id . "')";
+    $sql = "INSERT INTO loans (loan_type, loan_sanctioned, total_payable, loan_duration, interest_rate, loan_date, loan_status, account_id , customer_id) VALUES ('" . $loan_type . "', '" . $loan_amount . "', '" . $emi_total . "' , '" . $loan_duration . "', '" . $interest_rate . "', '" . $loan_date . "', '" . $loan_status . "', '" . $account_id . "','" . $customer_id . "')";
     if ($conn->query($sql) === TRUE) {
         echo "Record updated successfully";
         // update the account balance
@@ -99,7 +99,7 @@ else{
         $row = $result->fetch_assoc();
         $account_id=$row["account_id"];
         // insert a new loan
-        $sql = "INSERT INTO loans (loan_type, loan_amount, loan_duration, interest_rate, loan_date, loan_status, account_id, customer_id) VALUES ('" . $loan_type . "', '" . $loan_amount . "', '" . $loan_duration . "', '" . $interest_rate . "', '" . $loan_date . "', '" . $loan_status . "', '" . $account_id . "','" . $customer_id . "')";
+        $sql = "INSERT INTO loans (loan_type, loan_sanctioned, total_payable, loan_duration, interest_rate, loan_date, loan_status, account_id, customer_id) VALUES ('" . $loan_type . "', '" . $loan_amount . "', '" . $emi_total . "' , '" . $loan_duration . "', '" . $interest_rate . "', '" . $loan_date . "', '" . $loan_status . "', '" . $account_id . "','" . $customer_id . "')";
         if ($conn->query($sql) === TRUE) {
             echo "Record updated successfully";
             // update the account balance

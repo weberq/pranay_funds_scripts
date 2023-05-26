@@ -26,23 +26,16 @@ if ($conn->connect_error) {
 $today = date("Y-m-d");
 
 // get the sum of all account balances
-$sql = "SELECT SUM(account_balance) AS total_balance FROM accounts";
+$sql = "SELECT SUM(account_balance) AS total_balance FROM accounts WHERE account_type='1' OR account_type='2' OR account_type='3'";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 $total_balance = $row['total_balance'];
 
 // get the difference between the sum of all laon amount and sum of emi paid
-$sql2 = "SELECT SUM(loan_amount) AS total_loan_amount FROM loans";
+$sql2 = "SELECT SUM(account_balance) AS total_loan_amount FROM accounts WHERE account_type='4'";
 $result2 = $conn->query($sql2);
 $row2 = $result2->fetch_assoc();
 $total_loan_amount = $row2['total_loan_amount'];
-
-$sql3 = "SELECT SUM(emi_paid) AS total_emi_amount FROM loans";
-$result3 = $conn->query($sql3);
-$row3 = $result3->fetch_assoc();
-$total_emi_amount = $row3['total_emi_amount'];
-
-$net_loan_amount = $total_loan_amount - $total_emi_amount;
 
 // get the sum of all reward balances
 $sql4 = "SELECT SUM(balance) AS total_reward_balance FROM reward_wallet";
@@ -53,7 +46,11 @@ $total_reward_balance = $row4['total_reward_balance'];
 $net_amount = $total_balance + $total_reward_balance;
 
 // total deficiency
-$total_deficiency = $net_loan_amount - $net_amount;
+if($total_loan_amount > $net_amount){
+    $total_deficiency = $total_loan_amount + $net_amount;
+}else{
+    $total_deficiency = ($net_amount + $total_loan_amount) * -1;
+}
 
 
 
@@ -165,7 +162,7 @@ $total_deficiency = $net_loan_amount - $net_amount;
                             <div class="box">
                                 <i class="fa fa-landmark fa-3x" aria-hidden="true"></i>
                                 <div class="box-title">
-                                    <h3>Rs. <?php echo $net_loan_amount; ?></h3>
+                                    <h3>Rs. <?php echo $total_loan_amount; ?></h3>
                                 </div>
                                 <div class="box-text">
                                     <span>Total Pending Loans</span>

@@ -18,7 +18,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql="SELECT * FROM accounts WHERE account_type='1'";
+$sql="SELECT * FROM accounts WHERE account_type='4' AND account_number='9990040076'";
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
@@ -28,23 +28,24 @@ if ($result->num_rows > 0) {
         $account_balance=0;
         $account_type=$row["account_type"];
         $customer_id=$row["customer_id"];
-        $status=$row["status"];
-        $sql1="SELECT * FROM transactions WHERE account_id=$account_id";
+        $sql1="SELECT * FROM loans WHERE account_id=$account_id";
         $result1 = $conn->query($sql1);
         if ($result1->num_rows > 0) {
             // output data of each row
             while($row1 = $result1->fetch_assoc()) {
-                $transaction_id=$row1["transaction_id"];
-                $transaction_type=$row1["transaction_type"];
-                $transaction_date=$row1["transaction_date"];
-                $amount=$row1["amount"];
-                $account_id=$row1["account_id"];
-                if($transaction_type=="credit"){
-                    $account_balance=$account_balance+$amount;
-                }
-                else{
-                    $account_balance=$account_balance-$amount;
-                }
+                $loan_id=$row1["loan_id"];
+                $loan_type=$row1["loan_type"];
+                $loan_amount=$row1["loan_sanctioned"];
+                $loan_duration=$row1["loan_duration"];
+                $interest_rate=$row1["interest_rate"];
+                $loan_date=$row1["loan_date"];
+                $emi_paid=$row1["emi_paid"];
+                $without_intrest_month = $loan_amount/$loan_duration;
+                $intrest = $loan_amount*($interest_rate/100);
+                $emi = $without_intrest_month + $intrest;
+                $emi = round($emi);
+                $emi_total = $emi * $loan_duration;
+                $account_balance = $account_balance - $emi_total + $emi_paid;
             }
         }
         $sql2="UPDATE accounts SET account_balance=$account_balance WHERE account_id=$account_id";

@@ -85,7 +85,7 @@ if($row3==NULL){
     $i=1;
     while($row4 = $result4->fetch_assoc()){
         $loan_id=$row4['loan_id'];
-        $loan_amount=$row4['loan_amount'];
+        $loan_amount=$row4['loan_sanctioned'];
         $loan_interest=$row4['interest_rate'];
         // Print All Data
         echo $i."- Loan ID: ".$loan_id."<br>";
