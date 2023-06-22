@@ -1,7 +1,7 @@
 <?php
 // Establish a connection to your MySQL database
 $servername = "34.172.217.6"; 
-$username = "hydro"; 
+$username = "hydro";
 $password = "hydro123"; 
 $dbname = "pranay_funds"; 
 

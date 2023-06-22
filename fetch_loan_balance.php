@@ -65,7 +65,7 @@ $account_number = $row2['account_number'];
 $account_balance = $row2['account_balance'];
 
 // loan details
-$loan_amount = $row6['loan_amount'];
+$loan_amount = $row6['loan_sanctioned'];
 $loan_duration = $row6['loan_duration'];
 $loan_date = $row6['loan_date'];
 $intrerest_rate = $row6['interest_rate'];

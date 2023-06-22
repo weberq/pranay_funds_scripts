@@ -22,14 +22,14 @@
     <!-- simple boostrap form for account info from mobile number in a card-->
     <div class="card">
         <div class="card-header">
-            Account Info
+            Loan List Transactions
         </div>
         <div class="card-body">
-            <form action="../loan_account_creater.php" method="post">
+            <form action="../list_rewards.php" method="post">
                 <div class="form-group">
-                    <label for="mobile_number">Customer Id</label>
-                    <input type="text" class="form-control" id="mobile_number" name="customer_id"
-                        placeholder="Customer Id">
+                    <label for="account_number">Account Number</label>
+                    <input type="text" class="form-control" id="account_number" name="account_number"
+                        placeholder="Enter Account Number">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

@@ -29,7 +29,7 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         $wallet_id=$row["wallet_id"];
         $customer_id=$row["customer_id"];
-        $balance=$row["balance"];
+        $balance=0;
         $sql1="SELECT * FROM reward_transactions WHERE wallet_id=$wallet_id";
         $result1 = $conn->query($sql1);
         if ($result1->num_rows > 0) {
