@@ -1,6 +1,6 @@
 <?php
 
-$loan_amount = '8000';
+$loan_amount = '20000';
 
 $one_month= $loan_amount * 0.01;
 $one_emi = $one_month+ ($loan_amount/1);

@@ -18,7 +18,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$query="SELECT *,`customers`.`customer_name` FROM accounts,`customers` WHERE `accounts`.`customer_id`=`customers`.`customer_id` AND `accounts`.`account_type`='4'";
+$query="SELECT *,`customers`.`customer_name` FROM accounts,`customers` WHERE `accounts`.`customer_id`=`customers`.`customer_id` AND `accounts`.`account_type`='1'";
 
 $result = $conn->query($query);
 

@@ -1,73 +1,51 @@
 <?php
+// show errors
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Establish a connection to your MySQL database
-$servername = "34.172.217.6"; 
-$username = "hydro"; 
-$password = "hydro123"; 
-$dbname = "pranay_funds"; 
 
-// $servername = "localhost";
-// $username = "root"; 
-// $password = ""; 
-// $dbname = "pranay_funds";
+$loan_amount="10000";
+$intrerest_rate="3.5";
+$loan_duration="10";
+$loan_date=date('d-m-Y');
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// loan details
+$emi_paid = 0;
+$without_intrest_month = $loan_amount/$loan_duration;
+$intrest = $loan_amount*($intrerest_rate/100);
+$emi = $without_intrest_month + $intrest;
+$emi = round($emi);
+$emi_total = $emi * $loan_duration;
+$emi_remaining = $emi_total - $emi_paid;
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// print emi table
+$monthly_emi = $emi;
+$paid_amount = $emi_paid;
+$num_of_emis = $loan_duration;
+$pending_emis = [];
+$extra_payment = 0;
+
+for ($i = 0; $i < $num_of_emis; $i++) {
+    $pending_emi = $monthly_emi;
+    if ($i === 0) {
+        $pending_emi -= $paid_amount;
+        if ($pending_emi < 0) {
+            $extra_payment = abs($pending_emi);
+            $pending_emi = 0;
+        }
+    } else if ($extra_payment > 0) {
+        $pending_emi -= $extra_payment;
+        if ($pending_emi < 0) {
+            $extra_payment = abs($pending_emi);
+            $pending_emi = 0;
+        } else {
+            $extra_payment = 0;
+        }
+    }
+    $pending_emis[] = $pending_emi;
 }
-
-// get today's date
-$today = date("Y-m-d");
-
-if(isset($_POST['account_number'])){
-    $account_number=$_POST['account_number'];
-}else{
-    die("No data provided");
-}
-
-// get customer id
-$sql = "SELECT customer_id FROM accounts WHERE account_number = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $account_number);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
-$customer_id = $row['customer_id'];
-
-// gat wallet balance
-$sql2="SELECT * FROM reward_wallet WHERE customer_id=$customer_id";
-$stmt2 = $conn->prepare($sql2);
-$stmt2->execute();
-$result2 = $stmt2->get_result();
-$row2 = $result2->fetch_assoc();
-$reward_balance = $row2['balance'];
-
-// get account balance
-$sql3="SELECT * FROM accounts WHERE account_number=$account_number";
-$stmt3 = $conn->prepare($sql3);
-$stmt3->execute();
-$result3 = $stmt3->get_result();
-$row3 = $result3->fetch_assoc();
-$account_balance = $row3['account_balance'];
-
-// get total balance
-$total_balance = $reward_balance + $account_balance;
-
-// get user name
-$sql4="SELECT * FROM customers WHERE customer_id=$customer_id";
-$stmt4 = $conn->prepare($sql4);
-$stmt4->execute();
-$result4 = $stmt4->get_result();
-$row4 = $result4->fetch_assoc();
-$customer_name=$row4['customer_name'];
-$customer_address=$row4['customer_address'];
-$customer_email=$row4['customer_email'];
-$customer_contact=$row4['customer_contact'];
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,21 +61,10 @@ $customer_contact=$row4['customer_contact'];
     <style type="text/css">
     @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
-    :root{
-        --primary: #ffa500;
-    --secondary: #ff6347;
-    --light: #f5f5f5;
-    --dark: #000000;
-    }
-
     body {
         margin: 0;
         padding: 0;
-        background: linear-gradient(
-    to bottom right,
-    var(--primary),
-    var(--secondary)
-  );
+        background: #e1e1e1;
     }
 
     div,
@@ -120,7 +87,7 @@ $customer_contact=$row4['customer_contact'];
 
     body {
         width: 100%;
-        height: 100vh;
+        height: 100%;
         background-color: #e1e1e1;
         margin: 0;
         padding: 0;
@@ -214,7 +181,7 @@ $customer_contact=$row4['customer_contact'];
 
 
     <!-- Header -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" >
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
         <tr>
             <td height="20"></td>
         </tr>
@@ -236,14 +203,13 @@ $customer_contact=$row4['customer_contact'];
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <table width="250" border="0" cellpadding="0" cellspacing="0" align="left"
+                                            <table width="220" border="0" cellpadding="0" cellspacing="0" align="left"
                                                 class="col">
                                                 <tbody>
                                                     <tr>
-                                                        <td align="left"> <img src="logo2.png" width="28" alt="logo"
-                                                                border="0" style="position: relative;
-    top: 0.2em;" /><b style="font-size: 1.3em;
-    font-family: 'Open Sans';color: var(--primary)"> Pranay Funds Bank</b></td>
+                                                        <td align="left"> <img src="logo.png" width="28" alt="logo"
+                                                                border="0" /><b style="font-size: 1.3em;
+    font-family: 'Open Sans';"> Pranay Funds</b></td>
                                                     </tr>
                                                     <tr class="hiddenMobile">
                                                         <td height="40"></td>
@@ -254,7 +220,7 @@ $customer_contact=$row4['customer_contact'];
                                                     <tr>
                                                         <td
                                                             style="font-size: 12px; color: #5b5b5b; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: left;">
-                                                            Dear, <?php echo $customer_name; ?>.
+                                                            Hello, Customer.
                                                             <br> Thank you, for choosing Pranay Funds.
                                                         </td>
                                                     </tr>
@@ -271,8 +237,8 @@ $customer_contact=$row4['customer_contact'];
                                                     </tr>
                                                     <tr>
                                                         <td
-                                                            style="font-size: 21px; color: var(--primary); letter-spacing: -1px; font-family: 'Open Sans', sans-serif; line-height: 1; vertical-align: top; text-align: right;">
-                                                            Beta
+                                                            style="font-size: 21px; color: #efc729; letter-spacing: -1px; font-family: 'Open Sans', sans-serif; line-height: 1; vertical-align: top; text-align: right;">
+                                                            Alpha
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -286,8 +252,8 @@ $customer_contact=$row4['customer_contact'];
                                                         <td
                                                             style="font-size: 12px; color: #5b5b5b; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: right;">
                                                             <small>Account No. </small>
-                                                            <?php echo $account_number ?><br />
-                                                            <small><?php echo $today; ?></small>
+                                                            Na<br />
+                                                            <small><?php echo $loan_date ?></small>
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -304,7 +270,7 @@ $customer_contact=$row4['customer_contact'];
     </table>
     <!-- /Header -->
     <!-- Order Details -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" >
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
         <tbody>
             <tr>
                 <td>
@@ -326,19 +292,11 @@ $customer_contact=$row4['customer_contact'];
                                             <tr>
                                                 <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 10px 7px 0;"
                                                     width="52%" align="left">
-                                                    Account
+                                                    Month
                                                 </th>
-                                                <!-- <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 0 7px;"
-                                                    align="left">
-                                                    <small>Language</small>
-                                                </th>
-                                                <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 0 7px;"
-                                                    align="center">
-                                                    Quantity
-                                                </th> -->
                                                 <th style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #1e2b33; font-weight: normal; line-height: 1; vertical-align: top; padding: 0 0 7px;"
                                                     align="right">
-                                                    Subtotal
+                                                    EMI
                                                 </th>
                                             </tr>
                                             <tr>
@@ -347,35 +305,24 @@ $customer_contact=$row4['customer_contact'];
                                             <tr>
                                                 <td height="10" colspan="4"></td>
                                             </tr>
+                                            <?php foreach ($pending_emis as $i => $emi): ?>
                                             <tr>
-                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: var(--primary);  line-height: 18px;  vertical-align: top; padding:10px 0;"
+                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #efc729;  line-height: 18px;  vertical-align: top; padding:10px 0;"
                                                     class="article">
-                                                    Overall Investment
+                                                    <?php 
+                                                    // get month name from from a date
+                                                   echo  $month =  date('F', strtotime($loan_date. ' + '.($i+1).' months'));
+
+                                                    ?> - 05
                                                 </td>
-                                                <!-- <td
-                                                    style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e;  line-height: 18px;  vertical-align: top; padding:10px 0;">
-                                                    <small>English</small>
-                                                </td>
-                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e;  line-height: 18px;  vertical-align: top; padding:10px 0;"
-                                                    align="center">1</td> -->
                                                 <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #1e2b33;  line-height: 18px;  vertical-align: top; padding:10px 0;"
-                                                    align="right">Rs.<?php echo $account_balance; ?></td>
+                                                    align="right">Rs.<?php echo number_format($emi, 2); ?></td>
                                             </tr>
+                                            <?php endforeach; ?>
                                             <tr>
                                                 <td height="1" colspan="4" style="border-bottom:1px solid #e4e4e4"></td>
                                             </tr>
-                                            <tr>
-                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: var(--primary);  line-height: 18px;  vertical-align: top; padding:10px 0;"
-                                                    class="article">Overall Balance</td>
-                                                <!-- <td
-                                                    style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e;  line-height: 18px;  vertical-align: top; padding:10px 0;">
-                                                    <small>Farsi</small>
-                                                </td>
-                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #646a6e;  line-height: 18px;  vertical-align: top; padding:10px 0;"
-                                                    align="center">1</td> -->
-                                                <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #1e2b33;  line-height: 18px;  vertical-align: top; padding:10px 0;"
-                                                    align="right">Rs.<?php echo $total_balance; ?></td>
-                                            </tr>
+
                                             <tr>
                                                 <td height="1" colspan="4" style="border-bottom:1px solid #e4e4e4"></td>
                                             </tr>
@@ -395,7 +342,7 @@ $customer_contact=$row4['customer_contact'];
     <!-- /Order Details -->
 
     <!-- Information -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" >
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
         <tbody>
             <tr>
                 <td>
@@ -423,7 +370,7 @@ $customer_contact=$row4['customer_contact'];
                                                             <tr>
                                                                 <td
                                                                     style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                                                    <strong>ACCOUNT INFORMATION</strong>
+                                                                    <strong>Loan ACCOUNT INFORMATION</strong>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -432,11 +379,7 @@ $customer_contact=$row4['customer_contact'];
                                                             <tr>
                                                                 <td
                                                                     style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                                                    <?php echo $account_number; ?> <br>
-                                                                    <?php echo $customer_name; ?> <br>
-                                                                    <?php echo $customer_email; ?> <br>
-                                                                    <?php echo $customer_address; ?> <br>
-                                                                    <?php echo $customer_contact; ?>
+
 
                                                                 </td>
                                                             </tr>
@@ -453,7 +396,7 @@ $customer_contact=$row4['customer_contact'];
                                                             <tr>
                                                                 <td
                                                                     style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                                                    <strong>LOAN ACCOUNT</strong>
+                                                                    <strong>LOAN INFORMATION</strong>
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -462,7 +405,14 @@ $customer_contact=$row4['customer_contact'];
                                                             <tr>
                                                                 <td
                                                                     style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                                                    Nill<br> <br><a href="#" </td>
+                                                                    <?php echo 'Loan Amount : Rs.'.$loan_amount; ?> <br>
+                                                                    <?php echo 'Loan Date : '.$loan_date; ?> <br>
+                                                                    <?php echo 'Loan Duration : '.$loan_duration.' months'; ?>
+                                                                    <br>
+                                                                    <?php echo 'Intrest Rate : '.$intrerest_rate.'%'; ?>
+                                                                    <br>
+
+                                                                </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -539,7 +489,7 @@ $customer_contact=$row4['customer_contact'];
     </tbody>
     </table>
     <!-- /Information -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" >
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
 
         <tr>
             <td>

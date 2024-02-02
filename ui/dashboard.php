@@ -45,6 +45,18 @@ $total_reward_balance = $row4['total_reward_balance'];
 
 $net_amount = $total_balance + $total_reward_balance;
 
+// get the sum of all credit transactions
+$sql3 = "SELECT SUM(amount) AS total_credit FROM transactions WHERE transaction_type='credit'";
+$result3 = $conn->query($sql3);
+$row3 = $result3->fetch_assoc();
+$total_credit = $row3['total_credit'];
+
+// get the sum of all debit transactions
+$sql5 = "SELECT SUM(amount) AS total_debit FROM transactions WHERE transaction_type='debit'";
+$result5 = $conn->query($sql5);
+$row5 = $result5->fetch_assoc();
+$total_debit = $row5['total_debit'];
+
 // total deficiency
 if($total_loan_amount > $net_amount){
     $total_deficiency = $total_loan_amount + $net_amount;
@@ -187,6 +199,37 @@ if($total_loan_amount > $net_amount){
                                 </div>
                             </div>
                         </div>
+                        <!-- total_credit  -->
+                        <div class="col-lg-4 col-xs-12 text-center">
+                            <div class="box">
+                                <i class="fa fa-plus-minus fa-3x" aria-hidden="true"></i>
+                                <div class="box-title">
+                                    <h3>Rs. <?php echo $total_credit;  ?></h3>
+                                </div>
+                                <div class="box-text">
+                                    <span>Total Credit</span>
+                                </div>
+                                <div class="box-btn">
+                                    <a href="#">Learn More</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- total_debit  -->
+                        <div class="col-lg-4 col-xs-12 text-center">
+                            <div class="box">
+                                <i class="fa fa-plus-minus fa-3x" aria-hidden="true"></i>
+                                <div class="box-title">
+                                    <h3>Rs. <?php echo $total_debit;  ?></h3>
+                                </div>
+                                <div class="box-text">
+                                    <span>Total Debit</span>
+                                </div>
+                                <div class="box-btn">
+                                    <a href="#">Learn More</a>
+                                </div>
+                            </div>
+                        </div>
+
 
                     </div>
                 </div>
