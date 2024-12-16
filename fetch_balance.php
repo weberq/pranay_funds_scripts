@@ -66,6 +66,9 @@ $customer_address=$row4['customer_address'];
 $customer_email=$row4['customer_email'];
 $customer_contact=$row4['customer_contact'];
 
+// Get the current date in DDMMYYYY format
+$currentDate = date("dmY");
+$filename= $account_number . "_" . $currentDate . "_R";
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +78,7 @@ $customer_contact=$row4['customer_contact'];
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pranay Funds</title>
+    <title><?php echo $filename; ?></title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="robots" content="noindex,nofollow" />
